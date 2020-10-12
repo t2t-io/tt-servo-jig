@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Servo Control</title>
+    <link rel="stylesheet" href="index.css">
+    <script src='bower_components/jquery/dist/jquery.min.js'></script>
+  </head>
+  <body>
+    <h1>Servo Control</h1>
+    <div class='flex-container'>
+      <input type='number' min='0' max='360' class='textval' onchange='valInput(this)'></input>
+      <input type='range' min='0' max='360' value='180' class='range' onchange='rangeInput(this)'></input> 
+    </div>
+    <div class='flex-container'>
+      <input type='number' min='0' max='360' class='textval' onchange='valInput(this)'></input>
+      <input type='range' min='0' max='360' value='180' class='range' onchange='rangeInput(this)'></input> 
+    </div>
+    <div class='flex-container'>
+      <input min='1' type='number' class='textval'> repeat count </input>
+      <button> start </button>
+    </div>
+  <script>
+    function rangeInput(e){
+      e.previousElementSibling.value = e.value;
+    }
+    function valInput(e){
+      e.nextElementSibling.value=e.value;
+    }
+  </script>
+  </body>
+</html>
