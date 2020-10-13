@@ -4,28 +4,91 @@
     <meta charset="UTF-8">
     <title>Servo Control</title>
     <link rel="stylesheet" href="index.css">
-    <script src='bower_components/jquery/dist/jquery.min.js'></script>
+    <!-- <script src='bower_components/jquery/dist/jquery.min.js'></script> -->
   </head>
   <body>
     <h1>Servo Control</h1>
+    <p> (c) 2020, T2T Inc.  version 1</p>
+    <h3> Servo 1</h3>
     <div class='flex-container'>
-      <input type='number' min='0' max='360' class='textval' onchange='valInput(this)'></input>
-      <input type='range' min='0' max='360' value='180' class='range' onchange='rangeInput(this)'></input> 
+      <input  type='number' min='0' max='180' class='textval' onchange='valInput(this, 1)'></input>
+      <input id='m1min' type='range' min='0' max='180' value='90' class='range' onchange='rangeInput(this, 1)'></input> 
     </div>
     <div class='flex-container'>
-      <input type='number' min='0' max='360' class='textval' onchange='valInput(this)'></input>
-      <input type='range' min='0' max='360' value='180' class='range' onchange='rangeInput(this)'></input> 
+      <input  type='number' min='0' max='180' class='textval' onchange='valInput(this, 1)'></input>
+      <input id='m1max' type='range' min='0' max='180' value='90' class='range' onchange='rangeInput(this, 1)'></input> 
+    </div>
+    <h3> Servo 2</h3>
+    <div class='flex-container'>
+      <input type='number' min='0' max='180' class='textval' onchange='valInput(this, 2)'></input>
+      <input id='m2min' type='range' min='0' max='180' value='90' class='range' onchange='rangeInput(this, 2)'></input> 
     </div>
     <div class='flex-container'>
-      <input min='1' type='number' class='textval'> repeat count </input>
-      <button> start </button>
+      <input type='number' min='0' max='180' class='textval' onchange='valInput(this, 2)'></input>
+      <input id='m2max' type='range' min='0' max='180' value='90' class='range' onchange='rangeInput(this, 2)'></input> 
+    </div>
+    <div class='flex-container'>
+      <input min='1' type='number' class='textval' id='rptcnt'> repeat count </input>
+      <button onclick='flip(this)'> start </button>
     </div>
   <script>
-    function rangeInput(e){
+    window.$ = window.jQuery = require('./bower_components/jquery/dist/jquery.min.js');
+    const {ipcRenderer: ipc} = require('electron');
+    
+    function rangeInput(e, m){
       e.previousElementSibling.value = e.value;
+      servo(m, e.value);
     }
-    function valInput(e){
+    function valInput(e, m){
       e.nextElementSibling.value=e.value;
+      servo(m, e.value);
+    }
+    function servo(id, pos){
+      ipc.send('servo', `m${id}, p${pos}\n`);
+    }
+    function flipservo(){
+      if(mpos[1].cur){
+        mpos[1].cur=0;
+        servo(1,mpos[1][0])
+      }else{
+        mpos[1].cur=1;
+        servo(1,mpos[1][1])
+      }
+      if(mpos[2].cur){
+        mpos[2].cur=0;
+        servo(2,mpos[2][0])
+      }else{
+        mpos[2].cur=1;
+        servo(2,mpos[2][1])
+      }
+    }
+    var hinterval;
+    var mpos = {
+      1: {0: 0, 1:0, cur: 0},
+      2: {0: 0, 1:0, cur: 0},
+      remaining: 0,
+    }
+    function flip(e){
+      if(!hinterval){
+        mpos.remaining = $('#rptcnt').val();
+        mpos[1][0] = $('#m1min').val();
+        mpos[1][1] = $('#m1max').val();
+        mpos[2][0] = $('#m2min').val();
+        mpos[2][1] = $('#m2max').val();
+        console.log(mpos);
+        hinterval = setInterval( ()=>{
+          if(mpos.remaining >0 ){
+            flipservo();
+            mpos.remaining--;
+            $('#rptcnt').val(mpos.remaining);
+          }else{
+            clearInterval(hinterval);
+          }
+        }, 1000) 
+      }else{
+        clearInterval(hinterval);
+        hinterval = undefined;
+      }
     }
   </script>
   </body>
