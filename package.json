@@ -1,8 +1,8 @@
 {
   "name": "tt-servo-jig",
   "productName": "tt-servo-jig",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "version": "1.0.1",
+  "description": "TT Servo Jig",
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
