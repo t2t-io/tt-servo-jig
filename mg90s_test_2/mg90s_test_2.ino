@@ -40,21 +40,27 @@ void loop() {
       Serial.print(srbuf);
       Serial.println();
       
-      int mid, pos;
-      sscanf( srbuf, "m%d, p%d", &mid, &pos);
-      Serial.println(mid);
-      Serial.println(pos);
-      if(mid == 1){
-        //servo_1.write(pos);
-        S1A
-        servo_1.writeMicroseconds(pos);
-        delay(servo_delay);
-        S1D
-      }else if(mid == 2){
-        S2A
-        servo_2.writeMicroseconds(pos);
-        delay(servo_delay);
-        S2D
+      if(srbuf[0] == 'm'){
+        int mid, pos;
+        sscanf( srbuf, "m%d, p%d", &mid, &pos);
+        Serial.println(mid);
+        Serial.println(pos);
+        if(mid == 1){
+          //servo_1.write(pos);
+          S1A
+          servo_1.writeMicroseconds(pos);
+          delay(servo_delay);
+          S1D
+        }else if(mid == 2){
+          S2A
+          servo_2.writeMicroseconds(pos);
+          delay(servo_delay);
+          S2D
+        }
+      }else if(srbuf[0] == 'd'){
+        sscanf(srbuf, "d%d", &servo_delay);
+        Serial.print("servo_delay:");
+        Serial.println(servo_delay);
       }
     }else{
       srbuf[srptr++] = inb;      
